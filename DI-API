@@ -1,0 +1,60 @@
+#add-type -Path "C:\SQLScripdts\FALLADELLE\FallaDelleV10FP2102\Interop.SAPbobsCOM.dll"
+$sapCompany = new-Object -ComObject SAPbobsCOM.Company
+
+$sapCompany.Server = "NDB@192.168.1.227:30013"
+$sapCompany.SLDServer = "192.168.1.228:40000"
+$sapCompany.DbServerType = [SAPbobsCOM.BoDataServerTypes]"dst_HANADB"
+$sapCompany.CompanyDB = "DSLPRODUC"
+$sapCompany.UserName = "manager"
+$sapCompany.Password = "123*"
+#$sapCompany.DbUserName = "SYSTEM"
+#$sapCompany.DbPassword = "641"
+$sapCompany.language = [SAPbobsCOM.BoSuppLangs]"ln_English"
+
+#Las lineas siguientes vienen de un sample pero parece que causan la falla.... cosa loca!!
+#$sapCompany.DbUserName = "SYSTEM"
+#$sapCompany.DbPassword = "641"
+#$sapCompany.language = [SAPbobsCOM.BoSuppLangs]"ln_English"
+$lErrCode = 0
+$sErrMsg = ""
+
+
+$lRetCode = $sapCompany.Connect()
+if ($lRetCode -ne 0)
+{
+    write-host -backgroundcolor red -foregroundcolor white "No connection!"
+    $sapCompany.GetLastError([ref]$lErrCode,[ref]$sErrMsg)
+    write-host -backgroundcolor red -foregroundcolor white $lErrCode - $sErrMsg
+} 
+else 
+{
+    write-host -backgroundcolor DarkGreen -foregroundcolor white "Connected"
+	
+	$item = $sapCompany.GetBusinessObject([SAPbobsCOM.BoObjectTypes]"oItems")
+	
+	$Result=$item.GetByKey("01412221")
+
+    write-host -backgroundcolor green -foregroundcolor red $item.ItemName
+
+	$Test = $sapCompany.GetCompanyService().GetBusinessService([SAPbobsCOM.ServiceTypes]"ElectronicCommunicationActionService")
+
+	$z = $Test.GetDataInterface([SAPbobsCOM.ElectronicCommunicationActionServiceDataInterfaces]"ecasECMCodeParams")
+
+	$z.AbsEntry = 33533
+	
+	$aaa = $Test.GetAction($z)
+
+    write-host -backgroundcolor green -foregroundcolor red $aaa.ActMessage
+    write-host -backgroundcolor green -foregroundcolor red $aaa.ActStatus
+
+	$aaa.ActStatus = [SAPbobsCOM.EcmActionStatusEnum]"lasOK"
+	$aaa.ActMessage = "Hector te actualiza jeje"
+	$aaa.ReportID = ""
+
+	$Test.UpdateAction($aaa)
+	
+	$Test.ConfirmSuccessOfCommunication($z)
+	
+	$sapCompany.Disconnect()
+}
+
