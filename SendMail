@@ -1,0 +1,4 @@
+$secpasswd = ConvertTo-SecureString "MiPaSSWORD" -AsPlainText -Force
+$cred = New-Object System.Management.Automation.PSCredential ("hector.puk@valkimia.com", $secpasswd)
+[System.Net.ServicePointManager]::SecurityProtocol = 'Tls,TLS11,TLS12'
+Send-MailMessage -To 'hector.puk@gmail.com'  -From 'hector.puk@valkimia.com' -Subject 'TEST' -SmtpServer 'mail.valkimia.com' -Credential $cred -Port 587 -UseSsl
