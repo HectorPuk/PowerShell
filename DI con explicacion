@@ -1,0 +1,69 @@
+add-type -Path ".\Interop.SAPbobsCOM.dll"
+$sapCompany = new-Object -ComObject SAPbobsCOM.Company
+
+# SAPbobsCOM.Company es una clase (referida como class module), entonces para crear una instancia necesitas una variable asignarle un objeto que debe ser inicializado $sapCompany = new-Object -ComObject
+# Una vez creado te da mentodos como el connect() -previa carga de atributos como Server, password, etc-
+# Funciones como GetCompanyList
+# GetBusinessObject que te inicializa con una variable
+# GetCompanyService el cual tiene un metodo que es GetBusinessService
+	
+$sapCompany.Server = "192.168.1.233:30015"
+$sapCompany.SLDServer = "192.168.1.33:40000"
+$sapCompany.DbServerType = [SAPbobsCOM.BoDataServerTypes]"dst_HANADB"
+# [SAPbobsCOM.BoDataServerTypes].GetEnumNames() 
+
+
+
+#[SAPbobsCOM.AccountsService] asi obtengo un servicio.
+
+
+
+
+
+$sapCompany.CompanyDB = "SBODEMOAR"
+$sapCompany.UserName = "manager"
+$sapCompany.Password = "1234"
+$sapCompany.language = [SAPbobsCOM.BoSuppLangs]"ln_English"
+
+#Las lineas siguientes vienen de un sample pero parece que causan la falla.... cosa loca!!
+#$sapCompany.DbUserName = "SYSTEM"
+#$sapCompany.DbPassword = "Kaiser$641"
+#$sapCompany.language = [SAPbobsCOM.BoSuppLangs]"ln_English"
+$lErrCode = 0
+$sErrMsg = ""
+
+
+$lRetCode = $sapCompany.Connect()
+if ($lRetCode -ne 0)
+{
+    write-host -backgroundcolor red -foregroundcolor white "No connection!"
+    $sapCompany.GetLastError([ref]$lErrCode,[ref]$sErrMsg)
+    write-host -backgroundcolor red -foregroundcolor white $lErrCode - $sErrMsg
+} 
+else 
+{
+    write-host -backgroundcolor DarkGreen -foregroundcolor white "Connected"
+	
+	#$item = $sapCompany.GetBusinessObject([SAPbobsCOM.BoObjectTypes]"oItems")
+	
+	#$Result=$item.GetByKey("01412345")
+
+    #write-host -backgroundcolor green -foregroundcolor red $item.ItemName
+
+	#$Test = $sapCompany.GetCompanyService().GetBusinessService([SAPbobsCOM.ServiceTypes]"ElectronicCommunicationActionService")
+
+	#$z = $Test.GetDataInterface([SAPbobsCOM.ElectronicCommunicationActionServiceDataInterfaces]"ecasECMCodeParams")
+
+	#$z.AbsEntry = 21448
+
+	#$aaa = $Test.GetAction($z)
+
+	#$aaa.ActStatus = [SAPbobsCOM.EcmActionStatusEnum]"lasDocError"
+	#$aaa.ActMessage = "Fallado Hector"
+	#$aaa.ReportID = ""
+
+	#$Test.UpdateAction($aaa)
+	
+	$sapCompany.Disconnect()
+}
+
