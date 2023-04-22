@@ -1,0 +1,31 @@
+add-type -Path "C:\DesarrollosVS2015\SAPConnectConsole\ConsoleApplication15\obj\x64\Debug\Interop.SAPbobsCOM.dll"
+$sapCompany = new-Object -ComObject SAPbobsCOM.Company
+
+$sapCompany.Server = "192.168.1.104"
+$sapCompany.SLDServer = "192.168.1.104:40000"
+#$sapCompany.SLDServer = "localhost:30000"
+$sapCompany.DbServerType = [SAPbobsCOM.BoDataServerTypes]"dst_MSSQL2019"
+#$sapCompany.DbServerType = 15
+#$sapCompany.DbUserName = "sa"
+#$sapCompany.DbPassword = "Kaiser$641"
+$sapCompany.LicenseServer = "192.168.1.104:40000";
+$sapCompany.CompanyDB = "SBODemoAR"
+$sapCompany.UserName = "manager"
+$sapCompany.Password = "1234"
+$sapCompany.UseTrusted = $True
+#$sapCompany.language = [SAPbobsCOM.BoSuppLangs]"ln_English"
+$sapCompany.language = 3
+
+$lErrCode = 0
+$sErrMsg = ""
+
+
+$lRetCode = $sapCompany.Connect()
+if ($lRetCode -ne 0)
+{
+    write-host -backgroundcolor red -foregroundcolor white "No connection!"
+    $sapCompany.GetLastError([ref]$lErrCode,[ref]$sErrMsg)
+    write-host -backgroundcolor red -foregroundcolor white $lErrCode - $sErrMsg
+} 
+Write-Host -NoNewLine $sapCompany.DbServerType;
+$null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
