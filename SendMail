@@ -2,3 +2,16 @@ $secpasswd = ConvertTo-SecureString "MiPaSSWORD" -AsPlainText -Force
 $cred = New-Object System.Management.Automation.PSCredential ("hector.puk@valkimia.com", $secpasswd)
 [System.Net.ServicePointManager]::SecurityProtocol = 'Tls,TLS11,TLS12'
 Send-MailMessage -To 'hector.puk@gmail.com'  -From 'hector.puk@valkimia.com' -Subject 'TEST' -SmtpServer 'mail.valkimia.com' -Credential $cred -Port 587 -UseSsl
+
+Esta segunda opcion me anduvo, veo en la de arriba algo que ConvertTo-SecureString.... que nadie lo habia mencionado....
+
+
+$EmailFrom = "Hector.Puk@gmail.com"
+$EmailTo = "Hector.Puk@gmail.com"
+$Subject = "The subject of your email"
+$Body = "What do you want your email to say"
+$SMTPServer = "smtp.gmail.com"
+$SMTPClient = New-Object Net.Mail.SmtpClient($SmtpServer, 587)
+$SMTPClient.EnableSsl = $true
+$SMTPClient.Credentials = New-Object System.Net.NetworkCredential("hector.albino.puk@gmail.com", "aajt xxux fphn kzwu");
+$SMTPClient.Send($EmailFrom, $EmailTo, $Subject, $Body)
